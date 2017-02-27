@@ -359,6 +359,22 @@ service cal_sensors-sh /system/bin/sh /init.sensors.sh
     seclabel u:r:qti_init_shell:s0
     oneshot
 
+service ril-daemon2 /system/bin/rild -c 2
+    class main
+    socket rild2 stream 660 root radio
+    socket rild-debug2 stream 660 radio system
+    user root
+    disabled
+    group radio cache inet misc audio sdcard_r sdcard_rw diag qcom_diag log net_raw
+
+service ril-daemon3 /system/bin/rild -c 3
+    class main
+    socket rild3 stream 660 root radio
+    socket rild-debug3 stream 660 radio system
+    user root
+    disabled
+    group radio cache inet misc audio sdcard_r sdcard_rw diag qcom_diag log net_raw
+
 # Running hwaddrs under init is enforcing 0600, we need more
 on property:init.svc.hwaddrs=stopped
     chmod 644 /data/misc/wifi/config
@@ -439,6 +455,7 @@ service irsc_util /system/bin/irsc_util "/etc/sec_config"
 
 service netmgrd /system/bin/netmgrd
     class main
+    disabled
 
 service p2p_supplicant /system/bin/wpa_supplicant \
     -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
@@ -489,6 +506,12 @@ service qmuxd /system/bin/qmuxd
     class core
     user radio
     group radio audio bluetooth gps qcom_diag
+    disabled
+    
+service qcom-c_main-sh /system/bin/sh /init.class_main.sh
+    class main
+    user root
+    oneshot
 
 service rmt_storage /system/bin/rmt_storage
     class core
